@@ -1,7 +1,10 @@
 package com.tecsup.petclinic.services;
 
+import com.tecsup.petclinic.dtos.PetCountByTypeDTO;
 import com.tecsup.petclinic.dtos.TypeDTO;
 import com.tecsup.petclinic.exceptions.TypeNotFoundException;
+
+import java.util.List;
 
 /**
  * 
@@ -32,4 +35,7 @@ public interface TypeService {
 	 */
 	TypeDTO findById(Integer id) throws TypeNotFoundException;
 
+	void delete(Integer id) throws TypeNotFoundException;
+
+	List<PetCountByTypeDTO> getPetCountByType();
 }

@@ -1,5 +1,6 @@
 package com.tecsup.petclinic.services;
 
+import com.tecsup.petclinic.dtos.PetCountByTypeDTO;
 import com.tecsup.petclinic.dtos.TypeDTO;
 import com.tecsup.petclinic.entities.Type;
 import com.tecsup.petclinic.exceptions.TypeNotFoundException;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.List;
 
 /**
  *
@@ -64,6 +66,39 @@ public class TypeServiceImpl implements TypeService {
 			throw new TypeNotFoundException("Record not found...!");
 
 		return this.typeMapper.mapToDto(type.get());
+
 	}
 
+	@Override
+	public void delete(Integer id) throws TypeNotFoundException {
+		Type type = typeRepository.findById(id)
+				.orElseThrow(() -> new TypeNotFoundException("Record not found...!"));
+		typeRepository.delete(type);
+	}
+
+	@Override
+	public List<PetCountByTypeDTO> getPetCountByType() {
+		return typeRepository.getPetCountByType().stream()
+				.map(this::mapPetCountByType)
+				.toList();
+	}
+
+	private PetCountByTypeDTO mapPetCountByType(Object[] row) {
+		if (row.length != 3 || !(row[0] instanceof String typeName)
+				|| !(row[1] instanceof Number petCount)) {
+			throw new IllegalStateException("Unexpected pet count report row");
+		}
+
+		return new PetCountByTypeDTO(typeName, petCount.longValue(), toBoolean(row[2]));
+	}
+
+	private Boolean toBoolean(Object value) {
+		if (value instanceof Boolean active) {
+			return active;
+		}
+		if (value instanceof Number active) {
+			return active.intValue() != 0;
+		}
+		throw new IllegalStateException("Unexpected active value in pet count report");
+	}
 }
