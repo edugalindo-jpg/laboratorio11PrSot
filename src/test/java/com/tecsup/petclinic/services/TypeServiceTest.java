@@ -132,4 +132,17 @@ public class TypeServiceTest {
         Mockito.verify(repository).getPetCountByType();
     }
 
+    @Test
+    public void testGetPetCountByType_Empty() {
+        Mockito.when(repository.getPetCountByType()).thenReturn(List.of());
+
+        List<PetCountByTypeDTO> report = typeService.getPetCountByType();
+
+        assertNotNull(report);
+        assertInstanceOf(List.class, report);
+        assertTrue(report.isEmpty());
+        assertEquals(0, report.size());
+        Mockito.verify(repository).getPetCountByType();
+    }
+
 }
