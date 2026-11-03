@@ -1,6 +1,7 @@
 package com.tecsup.petclinic.services;
 
 import com.tecsup.petclinic.dtos.TypeDTO;
+import com.tecsup.petclinic.dtos.PetCountByTypeDTO;
 import com.tecsup.petclinic.entities.Type;
 import com.tecsup.petclinic.exceptions.TypeNotFoundException;
 import com.tecsup.petclinic.mappers.TypeMapper;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.Optional;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -106,6 +108,28 @@ public class TypeServiceTest {
 
         assertEquals(typeExpected.getName(), type.getName());
         assertEquals(typeExpected.getCareLevel(), type.getCareLevel());
+    }
+
+    @Test
+    public void testGetPetCountByType() {
+        Type type = new Type(null, "test-type", "Test type", true, "small", 8, "low");
+        Type savedType = new Type(100, "test-type", "Test type", true, "small", 8, "low");
+        TypeDTO typeDTO = typeMapper.mapToDto(type);
+
+        Mockito.when(repository.save(type)).thenReturn(savedType);
+        Mockito.when(repository.getPetCountByType())
+                .thenReturn(List.<Object[]>of(new Object[]{"test-type", 2L, true}));
+
+        TypeDTO createdType = typeService.create(typeDTO);
+        List<PetCountByTypeDTO> report = typeService.getPetCountByType();
+
+        assertNotNull(report);
+        assertTrue(report.size() > 0);
+        assertEquals("test-type", report.get(0).getTypeName());
+        assertEquals(2L, report.get(0).getPetCount());
+        assertTrue(report.get(0).getActive());
+        assertEquals(100, createdType.getId());
+        Mockito.verify(repository).getPetCountByType();
     }
 
 }
