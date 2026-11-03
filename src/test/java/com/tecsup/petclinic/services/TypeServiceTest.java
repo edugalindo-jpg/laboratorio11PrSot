@@ -145,4 +145,18 @@ public class TypeServiceTest {
         Mockito.verify(repository).getPetCountByType();
     }
 
+    @Test
+    public void testDeleteType() {
+        Integer typeId = 300;
+        Type type = new Type(typeId, "temporary-type", "Temporary type", true, "small", 5, "low");
+        Mockito.when(repository.findById(typeId))
+                .thenReturn(Optional.of(type), Optional.empty());
+
+        assertDoesNotThrow(() -> typeService.delete(typeId));
+        assertThrows(TypeNotFoundException.class, () -> typeService.findById(typeId));
+
+        Mockito.verify(repository).delete(type);
+        Mockito.verify(repository, Mockito.times(2)).findById(typeId);
+    }
+
 }
