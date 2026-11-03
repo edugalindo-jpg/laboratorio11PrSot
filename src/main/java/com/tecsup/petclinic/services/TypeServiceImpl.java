@@ -80,6 +80,7 @@ public class TypeServiceImpl implements TypeService {
 	public List<PetCountByTypeDTO> getPetCountByType() {
 		return typeRepository.getPetCountByType().stream()
 				.map(this::mapPetCountByType)
+				.filter(report -> Boolean.TRUE.equals(report.getActive()))
 				.toList();
 	}
 
