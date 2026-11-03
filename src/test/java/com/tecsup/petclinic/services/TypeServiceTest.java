@@ -49,4 +49,35 @@ public class TypeServiceTest {
         assertEquals(newTypeCreated.getDescription(), typeDTOCreated.getDescription());
     }
 
+    /**
+     *
+     */
+    @Test
+    public void testUpdateType() {
+
+        String UP_TYPE_NAME = "parrot";
+        String UP_DESCRIPTION = "Talking bird";
+
+        Type typeCreated = new Type(200, "bird", "Avian", true, "small", 8, "medium");
+
+        TypeDTO typeDTO = this.typeMapper.mapToDto(typeCreated);
+
+        // Prepare data for update
+        typeDTO.setName(UP_TYPE_NAME);
+        typeDTO.setDescription(UP_DESCRIPTION);
+
+        Type typeUpdate = this.typeMapper.mapToEntity(typeDTO);
+
+        Mockito.when(this.repository.save(typeUpdate))
+                .thenReturn(typeUpdate);
+
+        // Execute update
+        TypeDTO typeDTOUpdate = this.typeService.update(typeDTO);
+        log.info("Type updated : {}", typeDTOUpdate);
+
+        //            EXPECTED           ACTUAL
+        assertEquals(UP_TYPE_NAME, typeDTOUpdate.getName());
+        assertEquals(UP_DESCRIPTION, typeDTOUpdate.getDescription());
+    }
+
 }
