@@ -1,5 +1,5 @@
 # ===============================
-# = PARAMETERS
+# = PARAMETERS  H2
 # ===============================
 
 # https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#application-properties.core
@@ -42,7 +42,7 @@ logging :
   pattern :
   # Logging pattern for the console : IT IS OK
   # console : %d{yy-MM-dd HH:mm:ss} - %logger{36} - %msg%n
-  
+
   # Logging pattern for file : DONT WORK, DISABLE WRITE FILE LOG
   # file : %d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%
 
