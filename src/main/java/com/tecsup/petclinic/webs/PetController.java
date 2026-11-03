@@ -2,7 +2,7 @@ package com.tecsup.petclinic.webs;
 
 import com.tecsup.petclinic.dtos.PetDTO;
 import com.tecsup.petclinic.entities.Pet;
-import com.tecsup.petclinic.exception.PetNotFoundException;
+import com.tecsup.petclinic.exceptions.PetNotFoundException;
 import com.tecsup.petclinic.mappers.PetMapper;
 import com.tecsup.petclinic.services.PetService;
 import lombok.extern.slf4j.Slf4j;
@@ -123,7 +123,7 @@ public class PetController {
 			updatePet.setOwnerId(petDTO.getOwnerId());
 			updatePet.setTypeId(petDTO.getTypeId());
 
-			petService.update(updatePet);
+			updatePetTO = petService.update(updatePet);
 
 			//updatePetTO = this.mapper.toPetTO(updatePet);
 
