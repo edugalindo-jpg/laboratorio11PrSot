@@ -2,6 +2,7 @@ package com.tecsup.petclinic.services;
 
 import com.tecsup.petclinic.dtos.TypeDTO;
 import com.tecsup.petclinic.entities.Type;
+import com.tecsup.petclinic.exceptions.TypeNotFoundException;
 import com.tecsup.petclinic.mappers.TypeMapper;
 import com.tecsup.petclinic.repositories.TypeRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,8 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -78,6 +81,31 @@ public class TypeServiceTest {
         //            EXPECTED           ACTUAL
         assertEquals(UP_TYPE_NAME, typeDTOUpdate.getName());
         assertEquals(UP_DESCRIPTION, typeDTOUpdate.getDescription());
+    }
+
+    /**
+     *
+     */
+    @Test
+    public void testFindTypeById() {
+
+        Type typeExpected = new Type(1, "cat", "Domestic feline", true, "small", 15, "medium");
+
+        Mockito.when(this.repository.findById(1))
+                .thenReturn(Optional.of(typeExpected));
+
+        TypeDTO type = null;
+
+        try {
+            type = this.typeService.findById(1);
+        } catch (TypeNotFoundException e) {
+            fail(e.getMessage());
+        }
+
+        log.info("Type found : {}", type);
+
+        assertEquals(typeExpected.getName(), type.getName());
+        assertEquals(typeExpected.getCareLevel(), type.getCareLevel());
     }
 
 }
