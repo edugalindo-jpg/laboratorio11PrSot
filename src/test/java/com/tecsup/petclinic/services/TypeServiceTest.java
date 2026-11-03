@@ -159,4 +159,60 @@ public class TypeServiceTest {
         Mockito.verify(repository, Mockito.times(2)).findById(typeId);
     }
 
+    /**
+     *
+     */
+    @Test
+    public void testGetPetCountByType_ExcludeInactive() {
+
+        Mockito.when(repository.getPetCountByType())
+                .thenReturn(List.<Object[]>of(
+                        new Object[]{"cat", 4L, true},
+                        new Object[]{"snake", 1L, false},
+                        new Object[]{"dog", 3L, true}));
+
+        List<PetCountByTypeDTO> report = typeService.getPetCountByType();
+
+        log.info("Report : {}", report);
+
+        // Solo deben quedar los tipos activos (cat y dog)
+        assertEquals(2, report.size());
+
+        for (PetCountByTypeDTO item : report) {
+            assertTrue(item.getActive());
+            assertNotEquals("snake", item.getTypeName());
+        }
+    }
+
+    /**
+     *
+     */
+    @Test
+    public void testFindTypeById_NotFound() {
+
+        Integer ID_NOT_EXIST = 666;
+
+        Mockito.when(repository.findById(ID_NOT_EXIST))
+                .thenReturn(Optional.empty());
+
+        assertThrows(TypeNotFoundException.class, () -> typeService.findById(ID_NOT_EXIST));
+    }
+
+    /**
+     *
+     */
+    @Test
+    public void testDeleteType_NotFound() {
+
+        Integer ID_NOT_EXIST = 1000;
+
+        Mockito.when(repository.findById(ID_NOT_EXIST))
+                .thenReturn(Optional.empty());
+
+        assertThrows(TypeNotFoundException.class, () -> typeService.delete(ID_NOT_EXIST));
+
+        // No debe intentar borrar nada
+        Mockito.verify(repository, Mockito.never()).delete(Mockito.any(Type.class));
+    }
+
 }

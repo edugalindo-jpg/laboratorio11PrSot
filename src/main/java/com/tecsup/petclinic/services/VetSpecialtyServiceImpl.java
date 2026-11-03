@@ -1,0 +1,95 @@
+package com.tecsup.petclinic.services;
+
+import com.tecsup.petclinic.dtos.VetSpecialtyDTO;
+import com.tecsup.petclinic.entities.VetSpecialty;
+import com.tecsup.petclinic.entities.VetSpecialtyId;
+import com.tecsup.petclinic.exceptions.VetSpecialtyNotFoundException;
+import com.tecsup.petclinic.mappers.VetSpecialtyMapper;
+import com.tecsup.petclinic.repositories.VetSpecialtyRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ *
+ * @author jrojas
+ *
+ */
+@Service
+@Slf4j
+@RequiredArgsConstructor
+public class VetSpecialtyServiceImpl implements VetSpecialtyService {
+
+	private final VetSpecialtyRepository vetSpecialtyRepository;
+	private final VetSpecialtyMapper vetSpecialtyMapper;
+
+	/**
+	 *
+	 * @param vetSpecialtyDTO
+	 * @return
+	 */
+	@Override
+	public VetSpecialtyDTO assign(VetSpecialtyDTO vetSpecialtyDTO) {
+
+		VetSpecialty newVetSpecialty = vetSpecialtyRepository.save(vetSpecialtyMapper.mapToEntity(vetSpecialtyDTO));
+
+		return vetSpecialtyMapper.mapToDto(newVetSpecialty);
+	}
+
+	/**
+	 *
+	 * @param vetId
+	 * @return
+	 */
+	@Override
+	public List<VetSpecialtyDTO> findSpecialtiesByVet(Integer vetId) {
+
+		List<VetSpecialty> list = vetSpecialtyRepository.findByVetId(vetId);
+
+		List<VetSpecialtyDTO> result = new ArrayList<>();
+		for (VetSpecialty item : list) {
+			log.info("" + item);
+			result.add(vetSpecialtyMapper.mapToDto(item));
+		}
+		return result;
+	}
+
+	/**
+	 *
+	 * @param specialtyId
+	 * @return
+	 */
+	@Override
+	public List<VetSpecialtyDTO> findVetsBySpecialty(Integer specialtyId) {
+
+		List<VetSpecialty> list = vetSpecialtyRepository.findBySpecialtyId(specialtyId);
+
+		List<VetSpecialtyDTO> result = new ArrayList<>();
+		for (VetSpecialty item : list) {
+			log.info("" + item);
+			result.add(vetSpecialtyMapper.mapToDto(item));
+		}
+		return result;
+	}
+
+	/**
+	 *
+	 * @param vetId
+	 * @param specialtyId
+	 * @throws VetSpecialtyNotFoundException
+	 */
+	@Override
+	public void remove(Integer vetId, Integer specialtyId) throws VetSpecialtyNotFoundException {
+
+		Optional<VetSpecialty> vetSpecialty = vetSpecialtyRepository.findById(new VetSpecialtyId(vetId, specialtyId));
+
+		if (!vetSpecialty.isPresent())
+			throw new VetSpecialtyNotFoundException("Record not found...!");
+
+		vetSpecialtyRepository.delete(vetSpecialty.get());
+	}
+}
